@@ -15,17 +15,17 @@ double RandNumb() {
 }
 
 int main() {
-    Vector<int> V;
-    for (int i = 0 ; i < 10 ; ++i) {
-        V.Append( i + 1 );
+    Vector<Vector<int>> V;
+    for (int i = 0; i < 3; i++) {
+        V.Append( {1,2,3} );
     }
-    for (auto it = V.Begin(); it <= V.End(); ++it) {
-        cout << *it << endl;
-    }
-    cout << "---------------------------" << endl;
-    V = {1,2,3,4};
-    for (auto* it = V.Begin(); it <= V.End(); ++it) {
-        cout << *it << endl;
+    int counter = 1;
+    for (const auto& i : V) {
+        cout << counter++ << " = ";
+        for (const auto& j : i) {
+            cout << j << " ";
+        }
+        cout << endl;
     }
     return 0;
 }

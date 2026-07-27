@@ -66,12 +66,22 @@ public:
         capacity = 2;
         Body = new type[capacity];
     }
-
-    type* Begin() const {
+    Vector(std::initializer_list<type> list) {
+        ElementNumber = 0;
+        capacity = 2;
+        Body = new type[capacity];
+        for (const auto& it : list) {
+            if (this->IsFull()) {
+                this->Resize();
+            }
+            Body[ElementNumber++] = it;
+        }
+    }
+    type* begin() const {
         return Body;
     }
 
-    type* End() const {
+    type* end() const {
         return Body + ( ElementNumber - 1 );
     }
 
@@ -164,7 +174,7 @@ public:
             if (std::is_class_v<type>) {
                 throw InvalidInputError( "Input Invalid." );
             }
-            for (type* it = this->Begin(); it <= this->End(); ++it) {
+            for (type* it = this->begin(); it <= this->end(); ++it) {
                 if (*it == element) {
                     return counter;
                 }
