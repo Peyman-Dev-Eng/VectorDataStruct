@@ -114,7 +114,7 @@ public:
     }
 
     type* end() const {
-        return Body + ( ElementNumber - 1 );
+        return Body + ( ElementNumber );
     }
 
     void Resize() {
