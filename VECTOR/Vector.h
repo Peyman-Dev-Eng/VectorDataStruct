@@ -65,6 +65,7 @@ public:
         ElementNumber = 0;
         capacity = 2;
         Body = new type[capacity];
+        AuxiliaryBody = nullptr;
     }
     Vector(std::initializer_list<type> list) {
         ElementNumber = 0;
@@ -76,6 +77,9 @@ public:
             }
             Body[ElementNumber++] = it;
         }
+    }
+    Vector(const Vector&& other) {
+        
     }
     type* begin() const {
         return Body;
@@ -276,6 +280,32 @@ public:
         for (const auto& it : list) {
             this->Body[i++] = it;
         }
+        return *this;
+    }
+    Vector& operator=(const Vector& other)
+    {
+        if (this == &other)
+            return *this;
+
+        delete[] Body;
+
+        capacity = other.capacity;
+        ElementNumber = other.ElementNumber;
+
+        if (capacity == 0)
+        {
+            Body = nullptr;
+        }
+        else
+        {
+            Body = new type[capacity];
+
+            for (std::size_t i = 0; i < ElementNumber; i++)
+            {
+                Body[i] = other.Body[i];
+            }
+        }
+
         return *this;
     }
     ~Vector() {
