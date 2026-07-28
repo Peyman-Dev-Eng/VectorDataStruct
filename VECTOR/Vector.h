@@ -81,6 +81,7 @@ public:
     Vector(const Vector&& other) {
 
     }
+    Vector()
     type* begin() const {
         return Body;
     }
