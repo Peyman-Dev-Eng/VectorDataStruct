@@ -79,7 +79,7 @@ public:
         }
     }
     Vector(const Vector&& other) {
-        
+
     }
     type* begin() const {
         return Body;
