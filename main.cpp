@@ -15,16 +15,18 @@ double RandNumb() {
 }
 
 int main() {
-    Vector<Vector<int>> V;
-    for (int i = 0; i < 3; i++) {
-        V.Append( {1,2,3} );
+    vector<vector<int>> initVEC;
+    Vector<Vector<int>> VEC;
+    for (int i = 0; i < 10; i++) {
+        VEC.Append( {1,2,3,4,5} );
     }
-    int counter = 1;
-    for (const auto& i : V) {
-        cout << counter++ << " = ";
-        for (const auto& j : i) {
+    int c = 1;
+    for (const auto &i : VEC) {
+        cout << c << " = ";
+        for (const auto &j : i) {
             cout << j << " ";
         }
+        c++;
         cout << endl;
     }
     return 0;

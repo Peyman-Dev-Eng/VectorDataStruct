@@ -67,7 +67,38 @@ public:
         Body = new type[capacity];
         AuxiliaryBody = nullptr;
     }
-    Vector(std::initializer_list<type> list) {
+
+    // Copy Constractor
+    Vector( const Vector& other ) {
+        this->ElementNumber = other.ElementNumber;
+        this->capacity = other.capacity;
+        this->Body = new type[capacity];
+        for (std::size_t counter = 0; counter < ElementNumber; counter++) {
+            this->Body[counter] = other.Body[counter];
+        }
+    }
+
+    Vector( int SetCapacity ) {
+        capacity = SetCapacity;
+        Body = new type[capacity];
+    }
+
+    // Move Constractor
+    Vector(Vector&& other)
+    {
+        Body = other.Body;
+        AuxiliaryBody = other.AuxiliaryBody;
+        ElementNumber = other.ElementNumber;
+        capacity = other.capacity;
+
+        other.Body = nullptr;
+        other.AuxiliaryBody = nullptr;
+        other.ElementNumber = 0;
+        other.capacity = 0;
+    }
+
+    // Initialization
+    Vector( std::initializer_list<type> list ) {
         ElementNumber = 0;
         capacity = 2;
         Body = new type[capacity];
@@ -78,10 +109,6 @@ public:
             Body[ElementNumber++] = it;
         }
     }
-    Vector(const Vector&& other) {
-
-    }
-    Vector()
     type* begin() const {
         return Body;
     }
