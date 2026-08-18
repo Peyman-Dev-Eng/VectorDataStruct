@@ -29,12 +29,10 @@ private:
                 AuxiliaryBody[counter] = Body[counter];
             }
         }
-        return;
     }
 
     void ExportFromAuxiliaryBodyToBody() {
         Body = AuxiliaryBody;
-        return;
     }
 
     void CopyBodyToAuxiliaryBody() {
@@ -48,13 +46,13 @@ private:
         }
     }
 
-    bool IsFull() const {
+    [[nodiscard]] bool IsFull() const {
         if (ElementNumber >= capacity) {
             return true;
         }
         return false;
     }
-    bool IsEmpty() const {
+    [[nodiscard]] bool IsEmpty() const {
         if (ElementNumber == 0) {
             return true;
         }
@@ -78,14 +76,14 @@ public:
         }
     }
 
-    Vector( int SetCapacity ) {
+    explicit Vector(const int SetCapacity ) {
+        ElementNumber = 0;
         capacity = SetCapacity;
         Body = new type[capacity];
     }
 
     // Move Constractor
-    Vector(Vector&& other)
-    {
+    Vector(Vector&& other) noexcept {
         Body = other.Body;
         AuxiliaryBody = other.AuxiliaryBody;
         ElementNumber = other.ElementNumber;
@@ -143,10 +141,9 @@ public:
             this->Resize();
         }
         Body[ElementNumber++] = element;
-        return;
     }
 
-    void Pop( int index ) {
+    void Pop(const int index ) {
         try {
             if (index > ( ElementNumber - 1 ) or index < 0) {
                 throw std::out_of_range( "Snake body index out of range" );
@@ -166,7 +163,7 @@ public:
 
     void Remove( type element ) {
         try {
-            int FindResult = Find( element );
+            const int FindResult = Find( element );
             if (FindResult == -1) {
                 throw NotFoundElementError();
             }
@@ -201,8 +198,8 @@ public:
     }
 
     int Find( type element ) const {
-        int counter = 0;
         try {
+            int counter = 0;
             if (std::is_class_v<type>) {
                 throw InvalidInputError( "Input Invalid." );
             }
@@ -222,7 +219,7 @@ public:
         }
     }
 
-    void Insert( int index, type element ) {
+    void Insert(const int index, type element ) {
         try {
             if (index > ( ElementNumber - 1 ) or index < 0) {
                 throw std::out_of_range( "Snake body index out of range" );
@@ -232,11 +229,10 @@ public:
             }
             AuxiliaryBody = new type[capacity];
             std::size_t counter = 0;
-            std::size_t IndexElement;
             for (counter; counter < index; counter++) {
                 AuxiliaryBody[counter] = Body[counter];
             }
-            IndexElement = counter;
+            std::size_t IndexElement = counter;
             AuxiliaryBody[counter++] = element;
             for (; counter < ElementNumber + 1; counter++, IndexElement++) {
                 AuxiliaryBody[counter] = Body[IndexElement];
@@ -275,11 +271,11 @@ public:
         ++ElementNumber;
     }
 
-    std::size_t Capacity() const {
+    [[nodiscard]] std::size_t Capacity() const {
         return capacity;
     }
 
-    std::size_t Size() const {
+    [[nodiscard]] std::size_t Size() const {
         return ElementNumber;
     }
 
@@ -288,7 +284,7 @@ public:
             if (ElementNumber == 0) {
                 throw EmptySnakeBodyDataStruct();
             }
-            if (index > ElementNumber or index < 0) {
+            if (index > ElementNumber) {
                 throw std::out_of_range( "Snake body index out of range" );
             }
             return Body[index];
