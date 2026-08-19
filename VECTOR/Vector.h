@@ -298,8 +298,7 @@ public:
     }
 
     bool operator==(const std::initializer_list<type>& init_list) const {
-        const std::size_t size = init_list.size();
-        if (size != ElementNumber) {
+        if (const std::size_t size = init_list.size(); size != ElementNumber) {
             return false;
         }
         std::size_t index = 0;
