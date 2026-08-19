@@ -1,3 +1,4 @@
+#pragma once
 #include <exception>
 #include <stdexcept>
 class InvalidInputError : public std::runtime_error
