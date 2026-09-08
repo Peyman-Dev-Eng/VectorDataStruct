@@ -1,3 +1,4 @@
+#pragma once
 #include <array>
 #include <exception>
 #include <stdexcept>
@@ -6,7 +7,7 @@
 #include "NotFoundElementError.h"
 #include "InvalidInputError.h"
 
-template <typename type>
+template<typename type>
 class Vector
 {
 private:
@@ -15,7 +16,7 @@ private:
     std::size_t ElementNumber;
     std::size_t capacity;
 
-    void CopyBodyToAuxiliaryBodyWithoutThisIndex( int index ) {
+    void CopyBodyToAuxiliaryBodyWithoutThisIndex(const int index) {
         AuxiliaryBody = new type[capacity];
         bool FindIndex = false;
         for (std::size_t counter = 0; counter < ElementNumber; counter++) {
@@ -29,12 +30,10 @@ private:
                 AuxiliaryBody[counter] = Body[counter];
             }
         }
-        return;
     }
 
     void ExportFromAuxiliaryBodyToBody() {
         Body = AuxiliaryBody;
-        return;
     }
 
     void CopyBodyToAuxiliaryBody() {
@@ -48,18 +47,20 @@ private:
         }
     }
 
-    bool IsFull() const {
+    [[nodiscard]] bool IsFull() const {
         if (ElementNumber >= capacity) {
             return true;
         }
         return false;
     }
-    bool IsEmpty() const {
+
+    [[nodiscard]] bool IsEmpty() const {
         if (ElementNumber == 0) {
             return true;
         }
         return false;
     }
+
 public:
     Vector() {
         ElementNumber = 0;
@@ -69,7 +70,7 @@ public:
     }
 
     // Copy Constractor
-    Vector( const Vector& other ) {
+    Vector(const Vector& other) {
         this->ElementNumber = other.ElementNumber;
         this->capacity = other.capacity;
         this->Body = new type[capacity];
@@ -78,14 +79,14 @@ public:
         }
     }
 
-    Vector( int SetCapacity ) {
+    explicit Vector(const int SetCapacity) {
+        ElementNumber = 0;
         capacity = SetCapacity;
         Body = new type[capacity];
     }
 
     // Move Constractor
-    Vector(Vector&& other)
-    {
+    Vector(Vector&& other) noexcept {
         Body = other.Body;
         AuxiliaryBody = other.AuxiliaryBody;
         ElementNumber = other.ElementNumber;
@@ -98,7 +99,7 @@ public:
     }
 
     // Initialization
-    Vector( std::initializer_list<type> list ) {
+    Vector(std::initializer_list<type> list) {
         ElementNumber = 0;
         capacity = 2;
         Body = new type[capacity];
@@ -109,12 +110,13 @@ public:
             Body[ElementNumber++] = it;
         }
     }
+
     type* begin() const {
         return Body;
     }
 
     type* end() const {
-        return Body + ( ElementNumber );
+        return Body + (ElementNumber);
     }
 
     void Resize() {
@@ -122,11 +124,13 @@ public:
         delete[] Body;
         this->ExportFromAuxiliaryBodyToBody();
     }
+
     void Reserve() {
         ElementNumber = 0;
         capacity = 2;
         Body = new type[capacity];
     }
+
     void Clear() {
         delete[] Body;
         Body = nullptr;
@@ -135,7 +139,7 @@ public:
         capacity = 2;
     }
 
-    void Append( const type& element ) {
+    void Append(const type& element) {
         if (this->IsEmpty()) {
             this->Reserve();
         }
@@ -143,12 +147,11 @@ public:
             this->Resize();
         }
         Body[ElementNumber++] = element;
-        return;
     }
 
-    void Pop( int index ) {
+    void Pop(const int index) {
         try {
-            if (index > ( ElementNumber - 1 ) or index < 0) {
+            if (index > (ElementNumber - 1) or index < 0) {
                 throw std::out_of_range( "Snake body index out of range" );
             }
             this->CopyBodyToAuxiliaryBodyWithoutThisIndex( index );
@@ -164,9 +167,9 @@ public:
         }
     }
 
-    void Remove( type element ) {
+    void Remove(type element) {
         try {
-            int FindResult = Find( element );
+            const int FindResult = Find( element );
             if (FindResult == -1) {
                 throw NotFoundElementError();
             }
@@ -200,9 +203,9 @@ public:
         }
     }
 
-    int Find( type element ) const {
-        int counter = 0;
+    int Find(type element) const {
         try {
+            int counter = 0;
             if (std::is_class_v<type>) {
                 throw InvalidInputError( "Input Invalid." );
             }
@@ -222,9 +225,9 @@ public:
         }
     }
 
-    void Insert( int index, type element ) {
+    void Insert(const int index, type element) {
         try {
-            if (index > ( ElementNumber - 1 ) or index < 0) {
+            if (index > (ElementNumber - 1) or index < 0) {
                 throw std::out_of_range( "Snake body index out of range" );
             }
             if (this->IsFull()) {
@@ -232,11 +235,10 @@ public:
             }
             AuxiliaryBody = new type[capacity];
             std::size_t counter = 0;
-            std::size_t IndexElement;
             for (counter; counter < index; counter++) {
                 AuxiliaryBody[counter] = Body[counter];
             }
-            IndexElement = counter;
+            std::size_t IndexElement = counter;
             AuxiliaryBody[counter++] = element;
             for (; counter < ElementNumber + 1; counter++, IndexElement++) {
                 AuxiliaryBody[counter] = Body[IndexElement];
@@ -260,7 +262,7 @@ public:
         --ElementNumber;
     }
 
-    void PushFront( type element ) {
+    void PushFront(type element) {
         if (this->IsFull()) {
             capacity *= 2;
         }
@@ -275,20 +277,45 @@ public:
         ++ElementNumber;
     }
 
-    std::size_t Capacity() const {
+    [[nodiscard]] std::size_t Capacity() const {
         return capacity;
     }
 
-    std::size_t Size() const {
+    [[nodiscard]] std::size_t Size() const {
         return ElementNumber;
     }
 
-    type& operator[]( std::size_t index ) const {
+    bool operator==(const Vector& other) const {
+        if (this->ElementNumber != other.ElementNumber) {
+            return false;
+        }
+        for (std::size_t index = 0; index < ElementNumber; index++) {
+            if (this->Body[index] != other.Body[index]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool operator==(const std::initializer_list<type>& init_list) const {
+        if (const std::size_t size = init_list.size(); size != ElementNumber) {
+            return false;
+        }
+        std::size_t index = 0;
+        for (const type& element : init_list) {
+            if (this->Body[index++] != element) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    type& operator[](std::size_t index) const {
         try {
             if (ElementNumber == 0) {
                 throw EmptySnakeBodyDataStruct();
             }
-            if (index > ElementNumber or index < 0) {
+            if (index > ElementNumber) {
                 throw std::out_of_range( "Snake body index out of range" );
             }
             return Body[index];
@@ -302,7 +329,8 @@ public:
             std::cerr << "Error: " << e.what() << std::endl;
         }
     }
-    Vector& operator=( const std::initializer_list<type> list ) {
+
+    Vector& operator=(const std::initializer_list<type> list) {
         ElementNumber = list.size();
         int i = 0;
         for (const auto& it : list) {
@@ -310,32 +338,28 @@ public:
         }
         return *this;
     }
-    Vector& operator=(const Vector& other)
-    {
-        if (this == &other)
-            return *this;
+
+    Vector& operator=(const Vector& other) {
+        if (this == &other) return *this;
 
         delete[] Body;
 
         capacity = other.capacity;
         ElementNumber = other.ElementNumber;
 
-        if (capacity == 0)
-        {
+        if (capacity == 0) {
             Body = nullptr;
-        }
-        else
-        {
+        } else {
             Body = new type[capacity];
 
-            for (std::size_t i = 0; i < ElementNumber; i++)
-            {
+            for (std::size_t i = 0; i < ElementNumber; i++) {
                 Body[i] = other.Body[i];
             }
         }
 
         return *this;
     }
+
     ~Vector() {
         delete[] Body;
     }
